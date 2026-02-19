@@ -7,6 +7,11 @@ Implement portfolio risk metrics:
 - Monte Carlo VaR (GBM baseline)
 - CVaR / Expected Shortfall
 
+## Example Output
+
+![Risk Distribution](risk_distribution.png)
+
+
 ## Repo layout
 - `src/` core code
 - `notebooks/` exploration/results
