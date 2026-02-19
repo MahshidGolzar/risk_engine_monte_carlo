@@ -38,3 +38,27 @@ def parametric_var(port_ret: pd.Series, alpha: float = 0.01) -> float:
     sigma = float(np.std(r, ddof=1))
     z = float(norm.ppf(alpha))
     return float(-(mu + z * sigma))
+def ewma_var(
+    port_ret: pd.Series,
+    alpha: float = 0.01,
+    lambda_: float = 0.94
+) -> pd.Series:
+    """
+    Rolling EWMA volatility VaR.
+    Returns time series of VaR values.
+    """
+
+    from scipy.stats import norm
+
+    r = port_ret.dropna()
+    var_series = []
+    sigma2 = r.iloc[0] ** 2  # initialize variance
+
+    z = norm.ppf(alpha)
+
+    for ret in r:
+        sigma2 = lambda_ * sigma2 + (1 - lambda_) * ret ** 2
+        sigma = np.sqrt(sigma2)
+        var_series.append(-(z * sigma))
+
+    return pd.Series(var_series, index=r.index)
