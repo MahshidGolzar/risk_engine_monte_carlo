@@ -18,10 +18,3 @@ Implement portfolio risk metrics:
 - `tests/` unit tests
 - `data/` optional datasets
 
-## Roadmap (week 1)
-1) Data load (prices -> returns)
-2) Historical VaR
-3) Parametric VaR
-4) Monte Carlo VaR
-5) CVaR
-6) Plots + README math
