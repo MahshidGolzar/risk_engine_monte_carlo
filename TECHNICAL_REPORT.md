@@ -220,7 +220,33 @@ Extending the dataset to 2007–2024 would:
 
 ---
 
-## 11. Next Phase
+## 11. Christoffersen Independence and Conditional Coverage Tests
+
+Kupiec's test (Sections 5–6) only checks whether the *number* of violations matches the target rate. It cannot detect a model whose violations are correctly-numbered on average but arrive in clusters — exactly the situation where a VaR model is most dangerous in practice, because a user relying on it sees several breaches in quick succession rather than isolated, independent ones.
+
+Christoffersen (1998) decomposes this into:
+
+- **Independence test**: builds a 2×2 transition matrix of the violation indicator series (violation→violation, violation→no-violation, etc.) and tests whether the probability of a violation tomorrow depends on whether there was one today (`LR_ind`, χ²(1)).
+- **Conditional coverage test**: the joint test `LR_cc = LR_uc + LR_ind` (χ²(2)), combining Kupiec's unconditional-coverage statistic with the independence statistic.
+
+Applied to the two time-varying VaR series already computed in Sections 5–6:
+
+| VaR series | Violations / Obs. | Independence LR | Independence p-value | Conditional coverage LR | Conditional coverage p-value |
+|---|---|---|---|---|---|
+| Rolling 60-day historical VaR | 6 / 189 | 0.396 | 0.529 (not rejected) | 6.129 | 0.047 (rejected) |
+| EWMA VaR (λ=0.94) | 1 / 249 | 0.008 | 0.928 (not rejected) | 1.173 | 0.556 (not rejected) |
+
+Interpretation:
+
+- Rolling historical VaR fails conditional coverage, but here that is driven entirely by the unconditional-coverage component (Kupiec already rejects it on its own, Section 5) — the independence test does not additionally reject, meaning the excess violations in this sample happen not to be clustered.
+- EWMA VaR passes all three tests, reinforcing the Section 6 conclusion that it is the best-calibrated of the time-varying methods on this sample.
+- Because this real sample doesn't happen to contain a clustering failure, `tests/test_backtesting.py` includes a synthetic violation series (deliberately clustered, right average rate) that Kupiec passes but the independence and conditional-coverage tests correctly reject — demonstrating the failure mode the test is designed to catch, independent of whether it occurs in this particular 2023–2024 window.
+
+Reproducible via `PYTHONPATH=. python scripts/run_christoffersen_backtest.py`.
+
+---
+
+## 12. Next Phase
 
 Extend dataset to long-horizon (e.g., 2007–2024) and:
 
